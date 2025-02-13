@@ -1,7 +1,7 @@
 import sys
 import re
 
-MAX_LOOP_COUNT = 10000000
+MAX_LINE_COUNT = 1000000
 MAX_VARIABLE_SIZE = 256
 
 class Lang_shung_jwak:
@@ -22,7 +22,7 @@ class Lang_shung_jwak:
     def shung_to_idx(self, code):
         match = re.match(r"(슝|슈우*웅)", code)
         if not match:
-            return None
+            SyntaxError('어떻게 이게 리슝좍이냐!')
         if match.group() == "슝":
             return 0
         return code.count("우") + 1
@@ -30,21 +30,30 @@ class Lang_shung_jwak:
     def jwak_to_int(self, code):
         match = re.fullmatch(r"(좍|좌아*악)", code)
         if not match:
-            return None
+            SyntaxError('어떻게 이게 리슝좍이냐!')
         if match.group() == "좍":
             return 1
         return code.count("아") + 2
 
     def calculate(self, code):
+        code = re.sub(r"ㅋ+", "", code)
+        code = re.sub(r"(슝|슈우*웅)", "", code, count=1)
+        
+        
+        if code == '':
+            return 0
+
         token_list = self.tokenize_formula(code)
 
         result = 0
-        if re.fullmatch(r"(좍|좌아*악)", token_list[1]):
-            result = self.jwak_to_int(token_list[1])
-        elif re.fullmatch(r"(슝|슈우*웅)", token_list[1]):
-            result = self.var[self.shung_to_idx(token_list[1])]
+        if re.fullmatch(r"(좍|좌아*악)", token_list[0]):
+            result = self.jwak_to_int(token_list[0])
+        elif re.fullmatch(r"(슝|슈우*웅)", token_list[0]):
+            result = self.var[self.shung_to_idx(token_list[0])]
+        else:
+            SyntaxError('어떻게 이게 리슝좍이냐!')
 
-        current_index = 2
+        current_index = 1
         while current_index < len(token_list) - 1:
             operator = token_list[current_index]
             next_value_string = token_list[current_index + 1]
@@ -54,57 +63,94 @@ class Lang_shung_jwak:
                 next_value = self.jwak_to_int(next_value_string)
             elif re.fullmatch(r"(슝|슈우*웅)", next_value_string):
                 next_value = self.var[self.shung_to_idx(next_value_string)]
+            else:
+                SyntaxError('어떻게 이게 리슝좍이냐!')
 
             if next_value is None:
-                return None
+                SyntaxError('어떻게 이게 리슝좍이냐!')
 
-            if operator[0] == "~":
+            if re.fullmatch(r"~+", operator):
                 result += next_value
-            elif operator[0] == ";":
+            elif re.fullmatch(r";+", operator):
                 result -= next_value
-            elif operator[0] == ",":
+            elif re.fullmatch(r",+", operator):
                 result *= next_value
-            elif operator[0] == "@":
+            elif re.fullmatch(r"@+", operator):
                 result /= next_value
             else:
-                return None
+                SyntaxError('어떻게 이게 리슝좍이냐!')
 
             current_index += 2
 
         return result
 
     def condition_assign(self, code):
-        match1 = re.match(r"(슝|슈우*웅)", code)
-        if not match1:
+        match = re.match(r"(슝|슈우*웅)", code)
+        if not match:
             return False
         
         return True
 
     def condition_print(self, code):
-        if not code.startswith("비비") and not code.startswith("순수"):
+        if not code.startswith("비비"):
             return False
 
-        if not re.search(r"따+잇", code):
-            return False
-        modified_s = re.sub(r"따+잇", "", code)
-        if "따" in modified_s:
+        code = re.sub(r"비비", "", code, count=1)
+        code = re.sub(r"따+잇", "", code, count=1)
+
+        if code.count("보호막") > 1:
             return False
 
-        allowed_chars = {"따", "잇", "ㅋ"}
-        if not all(char in allowed_chars for char in code[2:]):    
+        code = re.sub(r"보호막", "", code, count=1)
+
+        if not re.fullmatch(r"ㅋ*", code):
             return False
 
         return True
+    
+    def condition_input(self, code):
+        if not code.startswith("순수"):
+            return False
+
+        code = re.sub(r"순수", "", code, count=1)
+        code = re.sub(r"따+잇", "", code, count=1)
+
+        if not re.fullmatch(r"ㅋ*", code):
+            return False
+
+        return True
+    
+    def condition_if(self, code):
+        if not "하는재미" in code:
+            return False
+        return True
+
+    def condition_goto(self, code):
+        if not code.startswith("에잇"):
+            return False
+        
+        code = re.sub(r"에잇", "", code)
+        if not re.fullmatch(r"ㅋ+", code):
+            return False
+
+        return True
+
 
     def type(self, code):
         if code == '':
             return None
         
-        if self.condition_assign(code):
+        if self.condition_if(code):
+            return 'IF'
+        elif self.condition_assign(code):
             return 'ASSIGN'
         elif self.condition_print(code):
             return 'PRINT'
-        
+        elif self.condition_input(code):
+            return 'INPUT'
+        elif self.condition_goto(code):
+            return 'GOTO'
+
         raise SyntaxError('어떻게 이게 리슝좍이냐!')
 
     def compileLine(self, code):
@@ -117,13 +163,26 @@ class Lang_shung_jwak:
 
         elif TYPE == 'PRINT':
             index = code.count("ㅋ")
-
-            if code.startswith("비비"):
-                print(chr(self.var[index]), end="")
-            elif code.startswith("순수"):
+            if "보호막" in code:
                 print(self.var[index], end="")
+            else:
+                print(chr(self.var[index]), end="")
 
-        return
+        elif TYPE == 'INPUT':
+            index = code.count("ㅋ")
+            value = int(input())
+            self.var[index] = value
+
+        elif TYPE == 'IF':
+            command_string, condition_string = code.split("하는재미")
+            value = self.calculate(condition_string)
+            if value == 0:
+                self.compileLine(command_string)
+
+        elif TYPE == 'GOTO':
+            return code.count("ㅋ")
+        
+        return 0
 
     def compile(self, code, check=True):
         code = code.replace(" ", "").replace("?", "").replace(".", "").replace("!", "")
@@ -134,13 +193,18 @@ class Lang_shung_jwak:
             raise SyntaxError('어떻게 이게 리슝좍이냐!')
         
         index = 1
-        loop_count = 0
+        line_count = 0
         while index < len(self.codeline):
-            self.compileLine(self.codeline[index])
-
-            loop_count += 1
-            if loop_count == MAX_LOOP_COUNT:
+            line_count += 1
+            if line_count == MAX_LINE_COUNT:
                 raise RecursionError('Line ' + str(index + 1) + '에서 타임 패러독스!')
+
+            line_num = self.compileLine(self.codeline[index])
+
+            if line_num != 0:
+                index = line_num
+                continue
+
             index += 1
 
     def compilePath(self, path):
