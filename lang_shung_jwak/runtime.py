@@ -42,17 +42,24 @@ class Lang_shung_jwak:
             return 0
 
         token_list = self.tokenize_formula(code)
+        if len(token_list) % 2 != 1:
+            raise SyntaxError('어떻게 이게 리슝좍이냐!')
+        for index, token in enumerate(token_list):
+            if index % 2 == 0:
+                if not re.fullmatch(r"(좍|좌아*악|슝|슈우*웅)", token):
+                    raise SyntaxError('어떻게 이게 리슝좍이냐!')
+            if index % 2 == 1:
+                if not re.fullmatch(r"(@+|,+|~+|;+)", token):
+                    raise SyntaxError('어떻게 이게 리슝좍이냐!')
 
         result = 0
         if re.fullmatch(r"(좍|좌아*악)", token_list[0]):
             result = self.jwak_to_int(token_list[0])
         elif re.fullmatch(r"(슝|슈우*웅)", token_list[0]):
             result = self.var[self.shung_to_idx(token_list[0])]
-        else:
-            raise SyntaxError('어떻게 이게 리슝좍이냐!')
 
         current_index = 1
-        while current_index < len(token_list) - 1:
+        while current_index < len(token_list):
             operator = token_list[current_index]
             next_value_string = token_list[current_index + 1]
             next_value = None
@@ -61,11 +68,6 @@ class Lang_shung_jwak:
                 next_value = self.jwak_to_int(next_value_string)
             elif re.fullmatch(r"(슝|슈우*웅)", next_value_string):
                 next_value = self.var[self.shung_to_idx(next_value_string)]
-            else:
-                raise SyntaxError('어떻게 이게 리슝좍이냐!')
-
-            if next_value is None:
-                raise SyntaxError('어떻게 이게 리슝좍이냐!')
 
             if re.fullmatch(r"~+", operator):
                 result += next_value
@@ -75,8 +77,6 @@ class Lang_shung_jwak:
                 result *= next_value
             elif re.fullmatch(r"@+", operator):
                 result //= next_value
-            else:
-                raise SyntaxError('어떻게 이게 리슝좍이냐!')
 
             current_index += 2
 
@@ -161,6 +161,8 @@ class Lang_shung_jwak:
             self.var[index] = result
 
         elif TYPE == 'PRINT':
+            if code.count("ㅋ") == 0:
+                raise SyntaxError('어떻게 이게 리슝좍이냐!')
             index = code.count("ㅋ") - 1
             if "보호막" in code:
                 print(self.var[index], end="")
@@ -168,6 +170,8 @@ class Lang_shung_jwak:
                 print(chr(self.var[index]), end="")
 
         elif TYPE == 'INPUT':
+            if code.count("ㅋ") == 0:
+                raise SyntaxError('어떻게 이게 리슝좍이냐!')
             index = code.count("ㅋ") - 1
             value = int(input())
             self.var[index] = value
