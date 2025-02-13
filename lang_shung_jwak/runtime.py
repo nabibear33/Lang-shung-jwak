@@ -22,23 +22,21 @@ class Lang_shung_jwak:
     def shung_to_idx(self, code):
         match = re.match(r"(슝|슈우*웅)", code)
         if not match:
-            SyntaxError('어떻게 이게 리슝좍이냐!')
+            raise SyntaxError('어떻게 이게 리슝좍이냐!')
         if match.group() == "슝":
             return 0
-        return code.count("우") + 1
+        return match.group().count("우") + 1
 
     def jwak_to_int(self, code):
         match = re.fullmatch(r"(좍|좌아*악)", code)
         if not match:
-            SyntaxError('어떻게 이게 리슝좍이냐!')
+            raise SyntaxError('어떻게 이게 리슝좍이냐!')
         if match.group() == "좍":
             return 1
-        return code.count("아") + 2
+        return match.group().count("아") + 2
 
     def calculate(self, code):
         code = re.sub(r"ㅋ+", "", code)
-        code = re.sub(r"(슝|슈우*웅)", "", code, count=1)
-        
         
         if code == '':
             return 0
@@ -51,7 +49,7 @@ class Lang_shung_jwak:
         elif re.fullmatch(r"(슝|슈우*웅)", token_list[0]):
             result = self.var[self.shung_to_idx(token_list[0])]
         else:
-            SyntaxError('어떻게 이게 리슝좍이냐!')
+            raise SyntaxError('어떻게 이게 리슝좍이냐!')
 
         current_index = 1
         while current_index < len(token_list) - 1:
@@ -64,10 +62,10 @@ class Lang_shung_jwak:
             elif re.fullmatch(r"(슝|슈우*웅)", next_value_string):
                 next_value = self.var[self.shung_to_idx(next_value_string)]
             else:
-                SyntaxError('어떻게 이게 리슝좍이냐!')
+                raise SyntaxError('어떻게 이게 리슝좍이냐!')
 
             if next_value is None:
-                SyntaxError('어떻게 이게 리슝좍이냐!')
+                raise SyntaxError('어떻게 이게 리슝좍이냐!')
 
             if re.fullmatch(r"~+", operator):
                 result += next_value
@@ -76,9 +74,9 @@ class Lang_shung_jwak:
             elif re.fullmatch(r",+", operator):
                 result *= next_value
             elif re.fullmatch(r"@+", operator):
-                result /= next_value
+                result //= next_value
             else:
-                SyntaxError('어떻게 이게 리슝좍이냐!')
+                raise SyntaxError('어떻게 이게 리슝좍이냐!')
 
             current_index += 2
 
@@ -129,7 +127,7 @@ class Lang_shung_jwak:
         if not code.startswith("에잇"):
             return False
         
-        code = re.sub(r"에잇", "", code)
+        code = re.sub(r"에잇", "", code, count=2)
         if not re.fullmatch(r"ㅋ+", code):
             return False
 
@@ -158,18 +156,19 @@ class Lang_shung_jwak:
 
         if TYPE == 'ASSIGN':
             index = self.shung_to_idx(code)
+            code = re.sub(r"(슝|슈우*웅)", "", code, count=1)
             result = self.calculate(code)
             self.var[index] = result
 
         elif TYPE == 'PRINT':
-            index = code.count("ㅋ")
+            index = code.count("ㅋ") - 1
             if "보호막" in code:
                 print(self.var[index], end="")
             else:
                 print(chr(self.var[index]), end="")
 
         elif TYPE == 'INPUT':
-            index = code.count("ㅋ")
+            index = code.count("ㅋ") - 1
             value = int(input())
             self.var[index] = value
 
@@ -177,12 +176,15 @@ class Lang_shung_jwak:
             command_string, condition_string = code.split("하는재미")
             value = self.calculate(condition_string)
             if value == 0:
-                self.compileLine(command_string)
+                return self.compileLine(command_string)
 
         elif TYPE == 'GOTO':
-            return code.count("ㅋ")
+            if code.count("에잇") == 1:
+                return -code.count("ㅋ")
+            elif code.count("에잇") == 2:
+                return code.count("ㅋ")
         
-        return 0
+        return
 
     def compile(self, code, check=True):
         code = code.replace(" ", "").replace("?", "").replace(".", "").replace("!", "")
@@ -199,13 +201,12 @@ class Lang_shung_jwak:
             if line_count == MAX_LINE_COUNT:
                 raise RecursionError('Line ' + str(index + 1) + '에서 타임 패러독스!')
 
-            line_num = self.compileLine(self.codeline[index])
+            move_line = self.compileLine(self.codeline[index])
 
-            if line_num != 0:
-                index = line_num
-                continue
-
-            index += 1
+            if move_line is not None:
+                index += move_line
+            else:
+                index += 1
 
     def compilePath(self, path):
         with open(path) as file:
