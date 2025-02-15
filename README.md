@@ -275,3 +275,11 @@ Hello, world!
 ```
 >> RecursionError: Line 6에서 타임 패러독스!
 ```
+
+## 로컬 실행
+
+1. 깃허브 파일을 다운받고 압축을 풀어주세요.
+2. 터미널 루트 폴더에서 다음 명령어를 실행하세요.
+```bash
+python -m lang_shung_jwak .\example\hello_world.jwak
+```
