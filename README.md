@@ -46,7 +46,7 @@
 
 문자열 탐색 기반으로 코드가 짜여져 있어 예외 처리가 제대로 되지 않은 곳이 많을 수 있습니다 (오류가 많다는 뜻).
 
-온라인으로 코드 실행할 수 있는 곳 [[여기](https://nabibear33.github.io/jwak_interpreter/)]
+온라인으로 코드 실행할 수 있는 곳 [[여기](https://nabibear33.github.io/jwak/)]
 
 ## 개요
 
