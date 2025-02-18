@@ -8,11 +8,27 @@ class Lang_shung_jwak:
     def __init__(self):
         self.var = [0] * MAX_VARIABLE_SIZE  # list of variable
         self.codeline = []  # list of each codeline
+        self.input_queue = []
 
     @staticmethod
     def print_shungjwak():
         print('\n')
         return
+
+    def append_input_queue(self, value):
+        value = value.split(" ")
+        for v in value:
+            if v.isdigit():
+                self.input_queue.append(int(v))
+            else:
+                for char in v:
+                    self.input_queue.append(ord(char))
+
+    def get_input_queue(self):
+        return self.input_queue.pop(0)
+
+    def get_input_queue_size(self):
+        return len(self.input_queue)
 
     def tokenize_formula(self, code):
         pattern = r"(좍|좌아*악|,+|~+|;+|@+|슝|슈우*웅)"
@@ -175,7 +191,9 @@ class Lang_shung_jwak:
             if code.count("ㅋ") == 0:
                 print('SyntaxError: 어떻게 이게 리슝좍이냐!')+1/0
             index = code.count("ㅋ") - 1
-            value = int(input())
+            if self.get_input_queue_size() == 0:
+                self.append_input_queue(input())
+            value = self.get_input_queue()
             self.var[index] = value
 
         elif TYPE == 'IF':
