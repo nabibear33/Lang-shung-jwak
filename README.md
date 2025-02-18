@@ -58,6 +58,11 @@
 
 코드 작성 TIP: 코드 작성 시 코드의 내용을 자신이 리슝좍이 된 것처럼 직접 말하면서 작성해 보세요. 좀 더 풍부한 감정을 코드에 담을 수 있습니다.
 
+## 업데이트
+
+2025-02-17 파이썬 구현
+2025-02-18 C# 구현 및 입출력 개선
+
 
 ## 문법
 
@@ -276,10 +281,10 @@ Hello, world!
 >> RecursionError: Line 6에서 타임 패러독스!
 ```
 
-## 로컬 실행
+## 로컬 실행(파이썬)
 
 1. 깃허브 파일을 다운받고 압축을 풀어주세요.
 2. 터미널을 열고 루트 폴더에서 다음 명령어를 실행하세요.
 ```bash
-python -m jwak .\example\hello_world.jwak
+python -m jwak_python .\example\hello_world.jwak
 ```
