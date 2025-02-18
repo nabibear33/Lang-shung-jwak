@@ -22,7 +22,7 @@ class Lang_shung_jwak:
     def shung_to_idx(self, code):
         match = re.match(r"(슝|슈우*웅)", code)
         if not match:
-            raise SyntaxError('어떻게 이게 리슝좍이냐!')
+            print('SyntaxError: 어떻게 이게 리슝좍이냐!')+1/0
         if match.group() == "슝":
             return 0
         return match.group().count("우") + 1
@@ -30,7 +30,7 @@ class Lang_shung_jwak:
     def jwak_to_int(self, code):
         match = re.fullmatch(r"(좍|좌아*악)", code)
         if not match:
-            raise SyntaxError('어떻게 이게 리슝좍이냐!')
+            print('SyntaxError: 어떻게 이게 리슝좍이냐!')+1/0
         if match.group() == "좍":
             return 1
         return match.group().count("아") + 2
@@ -43,14 +43,14 @@ class Lang_shung_jwak:
 
         token_list = self.tokenize_formula(code)
         if len(token_list) % 2 != 1:
-            raise SyntaxError('어떻게 이게 리슝좍이냐!')
+            print('SyntaxError: 어떻게 이게 리슝좍이냐!')+1/0
         for index, token in enumerate(token_list):
             if index % 2 == 0:
                 if not re.fullmatch(r"(좍|좌아*악|슝|슈우*웅)", token):
-                    raise SyntaxError('어떻게 이게 리슝좍이냐!')
+                    print('SyntaxError: 어떻게 이게 리슝좍이냐!')+1/0
             if index % 2 == 1:
                 if not re.fullmatch(r"(@+|,+|~+|;+)", token):
-                    raise SyntaxError('어떻게 이게 리슝좍이냐!')
+                    print('SyntaxError: 어떻게 이게 리슝좍이냐!')+1/0
 
         result = 0
         if re.fullmatch(r"(좍|좌아*악)", token_list[0]):
@@ -76,6 +76,8 @@ class Lang_shung_jwak:
             elif re.fullmatch(r",+", operator):
                 result *= next_value
             elif re.fullmatch(r"@+", operator):
+                if next_value==0:
+                    print('ZeroDivisionError: 어떻게 이게 리슝좍이냐!')+1/0
                 result //= next_value
 
             current_index += 2
@@ -149,7 +151,7 @@ class Lang_shung_jwak:
         elif self.condition_goto(code):
             return 'GOTO'
 
-        raise SyntaxError('어떻게 이게 리슝좍이냐!')
+        print('SyntaxError: 어떻게 이게 리슝좍이냐!')+1/0
 
     def compileLine(self, code):
         TYPE = self.type(code)
@@ -162,7 +164,7 @@ class Lang_shung_jwak:
 
         elif TYPE == 'PRINT':
             if code.count("ㅋ") == 0:
-                raise SyntaxError('어떻게 이게 리슝좍이냐!')
+                print('SyntaxError: 어떻게 이게 리슝좍이냐!')+1/0
             index = code.count("ㅋ") - 1
             if "보호막" in code:
                 print(self.var[index], end="")
@@ -171,7 +173,7 @@ class Lang_shung_jwak:
 
         elif TYPE == 'INPUT':
             if code.count("ㅋ") == 0:
-                raise SyntaxError('어떻게 이게 리슝좍이냐!')
+                print('SyntaxError: 어떻게 이게 리슝좍이냐!')+1/0
             index = code.count("ㅋ") - 1
             value = int(input())
             self.var[index] = value
@@ -196,7 +198,8 @@ class Lang_shung_jwak:
 
         if not self.codeline[0] == '교주님':
             self.print_shungjwak()
-            raise SyntaxError('어떻게 이게 리슝좍이냐!')
+            print(f'Line 1\t{self.codeline[0]} <-')
+            print('SyntaxError: 어떻게 이게 리슝좍이냐!')
         
         index = 1
         line_count = 0
@@ -204,13 +207,17 @@ class Lang_shung_jwak:
             line_count += 1
             if line_count == MAX_LINE_COUNT:
                 raise RecursionError('Line ' + str(index + 1) + '에서 타임 패러독스!')
+            try:
+                move_line = self.compileLine(self.codeline[index])
 
-            move_line = self.compileLine(self.codeline[index])
-
-            if move_line is not None:
-                index += move_line
-            else:
-                index += 1
+                if move_line is not None:
+                    index += move_line
+                else:
+                    index += 1
+            except:
+                print(f'Line {index+1} |\t{self.codeline[index]} <-')
+                print('SyntaxError: 어떻게 이게 리슝좍이냐!')
+                break
 
     def compilePath(self, path):
         with open(path) as file:
