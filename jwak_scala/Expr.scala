@@ -18,7 +18,7 @@ enum Expr:
 
   case PrintAscii(v: Var)
   case PrintValue(v: Var)
-  case ReadValue(v: Expr)
+  case ReadValue(v: Var)
 
   case If(code: Expr, condition: Expr)
   case Goto(lines: Int)
