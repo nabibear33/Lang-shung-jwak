@@ -6,7 +6,7 @@ import munit.FunSuite
 import Expr.*
 import scala.util.Try
 
-class ExpressionTest extends FunSuite:
+class 표현식_테스트 extends FunSuite:
 
   test("자료형"):
     assertEquals(자료형.parse("좍"), Success(Num(1)))
@@ -24,7 +24,7 @@ class ExpressionTest extends FunSuite:
       Success(Div(Sub(Var("슈웅"), Var("슈우웅")), Num(1))),
     )
 
-class StatementTest extends FunSuite:
+class 선언문_테스트 extends FunSuite:
   test("변수 선언"):
     assertEquals(`변수 선언`.parse("슝"), Success(Assign(Var("슝"), Num(0))))
     assertEquals(`변수 선언`.parse("슝좍"), Success(Assign(Var("슝"), Num(1))))
@@ -66,3 +66,7 @@ class StatementTest extends FunSuite:
       if문.parse("비비따잇ㅋ하는재미슝"),
       Success(If(PrintAscii(Var("슝")), Var("슝"))),
     )
+
+  test("goto문"):
+    assertEquals(goto문.parse("에잇ㅋ"), Success(Goto(-1)))
+    assertEquals(goto문.parse("에잇에잇ㅋㅋㅋㅋ"), Success(Goto(4)))

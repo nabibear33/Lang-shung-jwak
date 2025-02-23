@@ -5,7 +5,7 @@ import jwak.parser.Expr
 import jwak.parser.*
 import parsley.Success
 
-class OpsTest extends FunSuite:
+class 연산_테스트 extends FunSuite:
   val interpreter = Interpreter(
     Map(
       Expr.Var("슝") -> 0,
@@ -28,7 +28,7 @@ class OpsTest extends FunSuite:
   test("사칙연산"):
     assertEquals(표현식.parse("슈웅;슈우웅@좍").map(doEval), Success(Right(8)))
 
-class AssignTest extends FunSuite:
+class 변수_선언_테스트 extends FunSuite:
   import Expr.*
   val interpreter = Interpreter()
   val exprs = List(
@@ -39,19 +39,19 @@ class AssignTest extends FunSuite:
     "슈우웅슈웅~슝",
   ).flatMap(선언문.parse(_).toOption)
 
-  val results = exprs.scanLeft[(Interpreter, Either[String, Int])](
-    (interpreter, Right(0)),
-  ) { case ((interpreter, vars), expr) => interpreter.eval(expr) }
+  val results = exprs
+    .scanLeft(interpreter) { (interpreter, expr) => interpreter.eval(expr)._1 }
+    .map(_.vars)
 
   def doVars(input: Expr) = interpreter.eval(input)._1.vars
 
   test("0 대입"):
-    assertEquals(results(1)._1.vars.get(Var("슝")), Some(0))
+    assertEquals(results(1).get(Var("슝")), Some(0))
 
   test("1 대입"):
-    assertEquals(results(2)._1.vars.get(Var("슝")), Some(1))
-    assertEquals(results(3)._1.vars.get(Var("슝")), Some(1))
+    assertEquals(results(2).get(Var("슝")), Some(1))
+    assertEquals(results(3).get(Var("슝")), Some(1))
 
   test("표현식 대입"):
-    assertEquals(results(4)._1.vars.get(Var("슈웅")), Some(12))
-    assertEquals(results(5)._1.vars.get(Var("슈우웅")), Some(13))
+    assertEquals(results(4).get(Var("슈웅")), Some(12))
+    assertEquals(results(5).get(Var("슈우웅")), Some(13))
