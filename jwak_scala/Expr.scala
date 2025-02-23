@@ -22,3 +22,21 @@ enum Expr:
 
   case If(code: Expr, condition: Expr)
   case Goto(lines: Int)
+
+  override def toString: String = this match
+    case Num(v) => s"$v"
+    case Var(n) => s"$n"
+
+    case Add(l, r) => s"($l + $r)"
+    case Sub(l, r) => s"($l - $r)"
+    case Mul(l, r) => s"($l * $r)"
+    case Div(l, r) => s"($l / $r)"
+
+    case Assign(v, e) => s"$v = $e"
+
+    case PrintAscii(v) => s"ascii $v"
+    case PrintValue(v) => s"value $v"
+    case ReadValue(v)  => s"read $v"
+
+    case If(code, condition) => s"if $condition { $code }"
+    case Goto(lines)         => s"goto $lines"
