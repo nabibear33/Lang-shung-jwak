@@ -37,6 +37,15 @@ class 선언문_테스트 extends FunSuite:
       `변수 선언`.parse("슈우웅슈웅~슝"),
       Success(Assign(Var("슈우웅"), Add(Var("슈웅"), Var("슝")))),
     )
+    val expr = Add(Mul(Mul(Num(1), Num(4)), Var("슈웅")), Num(4))
+    assertEquals(
+      표현식.parse("좍???, 좌아아악,....!! 슈웅~ 좌아아악!"),
+      Success(expr),
+    )
+    assertEquals(
+      `변수 선언`.parse("슈우웅좍???, 좌아아악,....!! 슈웅~ 좌아아악!"),
+      Success(Assign(Var("슈우웅"), expr)),
+    )
 
   test("교주님"):
     assertEquals(교주님.parse("교주님"), Success(()))
