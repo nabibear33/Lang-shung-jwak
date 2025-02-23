@@ -1,3 +1,7 @@
 jwak_python/__pycache__/
 .vscode/
 example/test.jwak
+
+.bsp
+.scala-build
+.metals
