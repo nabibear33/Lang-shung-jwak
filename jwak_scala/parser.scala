@@ -61,7 +61,7 @@ val 표현식: Parsley[Expr] = 연산 <|> 값
   *   https://github.com/nabibear33/Lang-shung-jwak?tab=readme-ov-file#변수-선언
   */
 lazy val `변수 선언`: Parsley[Expr] =
-  (변수 <~> (eof <|> 표현식)).map {
+  (변수 <~> (eof <|> endOfLine.void <|> ~표현식)).map {
     case (v, e: Unit) => Expr.Assign(v, Expr.Num(0))
     case (v, e: Expr) => Expr.Assign(v, e)
   }
@@ -98,18 +98,23 @@ lazy val 입력: Parsley[Expr] =
   *   https://github.com/nabibear33/Lang-shung-jwak?tab=readme-ov-file#if문
   */
 lazy val if문 =
-  ((선언문 <~ token("하는재미")) <~> 표현식).map((a, b) => Expr.If(a, b))
+  ((~선언문 <~ token("하는재미")) <~> 표현식)
+    .map((code, condition) => Expr.If(condition, code))
 
 /** @see
   *   https://github.com/nabibear33/Lang-shung-jwak?tab=readme-ov-file#goto문
   */
 lazy val goto문: Parsley[Expr] =
-  (range(1, 2)("에잇").map(_.size) <~> countMany('ㅋ')).map {
+  (range(1, 2)(token("에잇")).map(_.size) <~> countMany('ㅋ')).map {
+    case (_, n) if n == 0 =>
+      throw new IllegalArgumentException(s"goto 0은 무한 루프에 빠집니다.")
     case (1, n) => Expr.Goto(-n)
     case (2, n) => Expr.Goto(n)
     case _      => throw new IllegalArgumentException("에잇은 1번 또는 2번 사용해야 합니다.")
   }
 
-lazy val 선언문: Parsley[Expr] = 입력 <|> 출력 <|> `변수 선언`
+lazy val 선언문: Parsley[Expr] = goto문 <|> 입력 <|> 출력 <|> `변수 선언`
 
-val 코드 = 교주님 ~> many(선언문 <~ 무시)
+val 코드 = atomic(if문) <|> 입력 <|> 출력 <|> `변수 선언` <|> goto문
+
+// val 코드 = 교주님 ~> many(선언문 <~ 무시 <~ endOfLine.void)

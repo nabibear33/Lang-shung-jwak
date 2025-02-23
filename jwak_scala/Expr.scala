@@ -1,6 +1,10 @@
 package jwak.parser
 
+import jwak.parser.Expr.Var
+
 enum Expr:
+  case Noop
+
   // 자료형
   case Num(v: Int)
 
@@ -20,12 +24,12 @@ enum Expr:
   case PrintValue(v: Var)
   case ReadValue(v: Var)
 
-  case If(code: Expr, condition: Expr)
+  case If(condition: Expr, code: Expr)
   case Goto(lines: Int)
 
   override def toString: String = this match
     case Num(v) => s"$v"
-    case Var(n) => s"$n"
+    case Var(n) => s"$$${n.size - 1}"
 
     case Add(l, r) => s"($l + $r)"
     case Sub(l, r) => s"($l - $r)"
@@ -38,5 +42,14 @@ enum Expr:
     case PrintValue(v) => s"value $v"
     case ReadValue(v)  => s"read $v"
 
-    case If(code, condition) => s"if $condition { $code }"
-    case Goto(lines)         => s"goto $lines"
+    case If(condition, code) => s"if $condition == 0 { $code }"
+    case Goto(lines)         => s"goto ${lines.signed}"
+    case Noop                => ""
+
+extension (x: Int)
+  inline def signed = x.sign match
+    case 1 => s"+$x"
+    case _ => s"$x"
+
+given Ordering[Expr.Var]:
+  def compare(x: Var, y: Var): Int = y.n.compareTo(x.n)

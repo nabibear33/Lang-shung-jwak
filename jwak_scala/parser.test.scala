@@ -76,9 +76,16 @@ class 선언문_테스트 extends FunSuite:
   test("if문"):
     assertEquals(
       if문.parse("비비따잇ㅋ하는재미슝"),
-      Success(If(PrintAscii(Var("슝")), Var("슝"))),
+      Success(If(Var("슝"), PrintAscii(Var("슝")))),
+    )
+    assertEquals(
+      코드.parse("에잇에잇ㅋㅋㅋㅋㅋㅋㅋ하는재미슈우웅;슈우우웅;좍"),
+      Success(If(Sub(Sub(Var(n = "슈우웅"), Var("슈우우웅")), Num(1)), Goto(7))),
     )
 
   test("goto문"):
     assertEquals(goto문.parse("에잇ㅋ"), Success(Goto(-1)))
     assertEquals(goto문.parse("에잇에잇ㅋㅋㅋㅋ"), Success(Goto(4)))
+    assertEquals(코드.parse("에잇ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ"), Success(Goto(-10)))
+    assertEquals(코드.parse("에잇!ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ"), Success(Goto(-18)))
+    assertEquals(코드.parse("에잇! 에잇!ㅋㅋㅋㅋ"), Success(Goto(4)))
