@@ -90,7 +90,6 @@ int executeCodeFromFile(const char* filename)
         Jwak jwak;
 
         TokenList tokenList = lexer.lexing(code);
-        tokenList.insert(tokenList.begin(), Token{TokenType::START, 0});
 
         ASTSeq ast = parser.parsing(tokenList);
 
