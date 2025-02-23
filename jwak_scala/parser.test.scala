@@ -48,7 +48,7 @@ class 선언문_테스트 extends FunSuite:
     )
 
   test("교주님"):
-    assertEquals(교주님.parse("교주님"), Success(()))
+    assertEquals(교주님.parse("교주님"), Success(Expr.Noop))
 
   test("ascii 출력"):
     assert(Try(출력.parse("비비따잇")).isFailure)
@@ -60,6 +60,7 @@ class 선언문_테스트 extends FunSuite:
 
     assertEquals(출력.parse("비비 따잇!?ㅋ"), Success(PrintAscii(Var("슝"))))
     assertEquals(출력.parse("비비....ㅋㅋㅋ 따잇!!ㅋ"), Success(PrintAscii(Var("슈우우웅"))))
+    assertEquals(출력.parse("비비 따잇!!ㅋㅋㅋㅋ"), Success(PrintAscii(Var("슈우우웅"))))
 
   test("값 출력"):
     assert(Try(출력.parse("비비보호막따잇")).isFailure)
@@ -82,6 +83,14 @@ class 선언문_테스트 extends FunSuite:
       코드.parse("에잇에잇ㅋㅋㅋㅋㅋㅋㅋ하는재미슈우웅;슈우우웅;좍"),
       Success(If(Sub(Sub(Var(n = "슈우웅"), Var("슈우우웅")), Num(1)), Goto(7))),
     )
+    assertEquals(
+      if문.parse("비비 따잇!!ㅋㅋㅋㅋ하는 재미 슈우우우우우웅...@@@@ 좌아아아아아아아아악..!"),
+      Success(If(Div(Var("슈우우우우우웅"), Num(10)), PrintAscii(Var("슈우우웅")))),
+    )
+    assertEquals(
+      if문.parse("에잇? 에잇!!ㅋㅋㅋㅋ하는 재미ㅋㅋㅋㅋ 슈웅;;;좍?!!"),
+      Success(If(Sub(Var("슈웅"), Num(1)), Goto(4))),
+    )
 
   test("goto문"):
     assertEquals(goto문.parse("에잇ㅋ"), Success(Goto(-1)))
@@ -89,3 +98,4 @@ class 선언문_테스트 extends FunSuite:
     assertEquals(코드.parse("에잇ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ"), Success(Goto(-10)))
     assertEquals(코드.parse("에잇!ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ"), Success(Goto(-18)))
     assertEquals(코드.parse("에잇! 에잇!ㅋㅋㅋㅋ"), Success(Goto(4)))
+    assertEquals(코드.parse("에잇? 에잇!!ㅋㅋㅋㅋ"), Success(Goto(4)))

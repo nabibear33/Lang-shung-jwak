@@ -25,7 +25,7 @@ def token[A](p: Parsley[A]): Parsley[A] = lexeme(atomic(p))
 /** @see
   *   https://github.com/nabibear33/Lang-shung-jwak?tab=readme-ov-file#교주님
   */
-val 교주님 = "교주님".void <~ (무시 <|> eof)
+val 교주님 = "교주님".as(Expr.Noop) <~ (무시 <|> eof)
 
 /** @see
   *   https://github.com/nabibear33/Lang-shung-jwak?tab=readme-ov-file#자료형
@@ -98,7 +98,7 @@ lazy val 입력: Parsley[Expr] =
   *   https://github.com/nabibear33/Lang-shung-jwak?tab=readme-ov-file#if문
   */
 lazy val if문 =
-  ((~선언문 <~ token("하는재미")) <~> 표현식)
+  ((token(~선언문)) <~> (token("하는") ~> token("재미") ~> ㅋ.void ~> 표현식))
     .map((code, condition) => Expr.If(condition, code))
 
 /** @see
@@ -115,6 +115,6 @@ lazy val goto문: Parsley[Expr] =
 
 lazy val 선언문: Parsley[Expr] = goto문 <|> 입력 <|> 출력 <|> `변수 선언`
 
-val 코드 = atomic(if문) <|> 입력 <|> 출력 <|> `변수 선언` <|> goto문
+val 코드 = 교주님 <|> atomic(if문) <|> 입력 <|> 출력 <|> `변수 선언` <|> goto문
 
 // val 코드 = 교주님 ~> many(선언문 <~ 무시 <~ endOfLine.void)

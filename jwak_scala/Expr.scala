@@ -29,7 +29,7 @@ enum Expr:
 
   override def toString: String = this match
     case Num(v) => s"$v"
-    case Var(n) => s"$$${n.size - 1}"
+    case Var(n) => s"$$${n.size}"
 
     case Add(l, r) => s"($l + $r)"
     case Sub(l, r) => s"($l - $r)"
