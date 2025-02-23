@@ -72,13 +72,16 @@ def varAt(at: Int): Expr.Var = at match
   case 1 => Expr.Var("슝")
   case n => Expr.Var(s"슈${"우" * (n - 2)}웅")
 
+val ㅋ = token(countMany('ㅋ'))
+val 따잇 = token(some('따') ~> '잇')
+
 /** @see
   *   https://github.com/nabibear33/Lang-shung-jwak?tab=readme-ov-file#출력
   */
 lazy val 출력: Parsley[Expr] =
-  ("비비" ~> countMany('ㅋ')
-    <~> option("보호막") <~> countMany('ㅋ')
-    <~> some('따') ~> '잇' ~> countMany('ㅋ'))
+  (token("비비") ~> ㅋ
+    <~> option("보호막") <~> ㅋ
+    <~> 따잇 ~> ㅋ)
     .map { case (((a, shield), b), c) =>
       val ㅋ = varAt(a + b + c)
       if shield.isDefined then Expr.PrintValue(ㅋ) else Expr.PrintAscii(ㅋ)
@@ -88,7 +91,7 @@ lazy val 출력: Parsley[Expr] =
   *   https://github.com/nabibear33/Lang-shung-jwak?tab=readme-ov-file#입력
   */
 lazy val 입력: Parsley[Expr] =
-  (("순수" ~> countMany('ㅋ')) <~> (some('따') ~> '잇' ~> countMany('ㅋ')))
+  ((token("순수") ~> ㅋ) <~> (따잇 ~> ㅋ))
     .map((a, b) => Expr.ReadValue(varAt(a + b)))
 
 /** @see

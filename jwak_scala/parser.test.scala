@@ -58,6 +58,9 @@ class 선언문_테스트 extends FunSuite:
     assert(출력.parse("비ㅋㅋ비따잇").isFailure)
     assert(출력.parse("비비따ㅋㅋㅋ잇").isFailure)
 
+    assertEquals(출력.parse("비비 따잇!?ㅋ"), Success(PrintAscii(Var("슝"))))
+    assertEquals(출력.parse("비비....ㅋㅋㅋ 따잇!!ㅋ"), Success(PrintAscii(Var("슈우우웅"))))
+
   test("값 출력"):
     assert(Try(출력.parse("비비보호막따잇")).isFailure)
     assertEquals(출력.parse("비비보호막따잇ㅋㅋ"), Success(PrintValue(Var("슈웅"))))
