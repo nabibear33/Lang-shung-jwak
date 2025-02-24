@@ -47,6 +47,7 @@
 문자열 탐색 기반으로 코드가 짜여져 있어 예외 처리가 제대로 되지 않은 곳이 많을 수 있습니다 (오류가 많다는 뜻).
 
 온라인으로 코드 실행할 수 있는 곳 [[여기](https://nabibear33.github.io/jwak/)]
+랭슝좍 언어를 보기 쉽게 해주는 [[하이라이터](https://marketplace.visualstudio.com/items?itemName=ngvf1222.lang-shung-jwak-highlighter)]
 
 ## 개요
 
@@ -62,7 +63,8 @@
 
 2025-02-17 파이썬 구현체 추가  
 2025-02-18 C# 구현체 추가 및 입출력 개선  
-2025-02-22 C++ 구현체 추가
+2025-02-22 C++ 구현체 추가  
+2025-02-24 Scala 3 구현체 추가
 
 
 ## 문법
@@ -288,4 +290,16 @@ Hello, world!
 2. 터미널을 열고 루트 폴더에서 다음 명령어를 실행하세요.
 ```bash
 python -m jwak_python .\example\hello_world.jwak
+```
+
+## 문장을 .jwak 코드 파일로 만들기(파이썬)
+example 폴더 내 output.jwak 파일에 기록됩니다.
+```bash
+python -m jwak_python.jwak_maker "원하는 문장"
+>> Code is saved at 'example\output.jwak'
+```
+코드 실행 결과
+```bash
+python -m jwak_python .\example\output.jwak
+>> Hello, world!
 ```
