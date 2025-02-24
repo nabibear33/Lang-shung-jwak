@@ -52,8 +52,6 @@ class Lang_shung_jwak:
         return match.group().count("아") + 2
 
     def calculate(self, code):
-        code = re.sub(r"ㅋ+", "", code)
-        
         if code == '':
             return 0
 
