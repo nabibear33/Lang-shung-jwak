@@ -33,6 +33,9 @@ class Lang_shung_jwak:
     def tokenize_formula(self, code):
         pattern = r"(좍|좌아*악|,+|~+|;+|@+|슝|슈우*웅)"
         tokens = re.findall(pattern, code)
+        code = re.sub(pattern, "", code)
+        if code.strip():
+            print('SyntaxError: 어떻게 이게 리슝좍이냐!')+1/0
         return tokens
 
     def shung_to_idx(self, code):
