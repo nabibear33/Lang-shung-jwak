@@ -1,0 +1,18 @@
+{
+  "name": "@jwak/core",
+  "version": "1.0.0",
+  "license": "MIT",
+  "type": "module",
+  "exports": "./dist/esm/index.js",
+  "types": "./dist/esm/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx --watch ./src/main.ts"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.2",
+    "tsup": "^8.4.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3"
+  }
+}
