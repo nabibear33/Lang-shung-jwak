@@ -61,10 +61,24 @@
 
 ## 업데이트
 
-2025-02-17 파이썬 구현체 추가  
+2025-02-17 Python 구현체 추가  
 2025-02-18 C# 구현체 추가, 입출력 개선  
 2025-02-22 C++ 구현체 추가  
-2025-02-24 Scala 3 구현체 추가, 문장을 코드로 변환하는 파이썬 코드 추가
+2025-02-24 Scala 3 구현체 추가, 문장을 코드로 변환하는 파이썬 코드 추가  
+2025-03-01 JS 구현체 추가, 웹 기반 playground 추가  
+2025-03-03 Rust 구현체 추가  
+
+## 언어별 사용법
+
+언어별 README.md로 연결됩니다.
+
+[[Python](https://github.com/nabibear33/Lang-shung-jwak/blob/main/jwak_python/README.md)]
+[C#]
+[[C++](https://github.com/nabibear33/Lang-shung-jwak/blob/main/jwak_cpp/README.md)]
+[[Scala3](https://github.com/nabibear33/Lang-shung-jwak/blob/main/jwak_python/README.md)]
+[[JS](https://github.com/nabibear33/Lang-shung-jwak/blob/main/jwak_js/README.md)]
+[[Rust](https://github.com/nabibear33/Lang-shung-jwak/blob/main/jwak_rust/README.md)]
+
 
 
 ## 문법
@@ -282,24 +296,4 @@ Hello, world!
 출력
 ```
 >> RecursionError: Line 6에서 타임 패러독스!
-```
-
-## 로컬 실행(파이썬)
-
-1. 깃허브 파일을 다운받고 압축을 풀어주세요.
-2. 터미널을 열고 루트 폴더에서 다음 명령어를 실행하세요.
-```bash
-python -m jwak_python .\example\hello_world.jwak
-```
-
-## 문장을 .jwak 코드 파일로 만들기(파이썬)
-example 폴더 내 output.jwak 파일에 기록됩니다.
-```bash
-python -m jwak_python.jwak_maker "원하는 문장"
->> Code is saved at 'example\output.jwak'
-```
-코드 실행 결과
-```bash
-python -m jwak_python .\example\output.jwak
->> Hello, world!
 ```
