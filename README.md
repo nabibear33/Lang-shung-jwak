@@ -75,7 +75,7 @@
 [[Python](https://github.com/nabibear33/Lang-shung-jwak/blob/main/jwak_python/README.md)]
 [C#]
 [[C++](https://github.com/nabibear33/Lang-shung-jwak/blob/main/jwak_cpp/README.md)]
-[[Scala3](https://github.com/nabibear33/Lang-shung-jwak/blob/main/jwak_python/README.md)]
+[[Scala3](https://github.com/nabibear33/Lang-shung-jwak/blob/main/jwak_scala/README.md)]
 [[JS](https://github.com/nabibear33/Lang-shung-jwak/blob/main/jwak_js/README.md)]
 [[Rust](https://github.com/nabibear33/Lang-shung-jwak/blob/main/jwak_rust/README.md)]
 
