@@ -18,11 +18,13 @@ extension [A](xs: Iterable[A])
       .map((line, idx) => s"${idx.toString.padTo(2, ' ')}: $line")
       .mkString("\n") + "\n"
 
+def codeToExprs(code: String)(using log: JwakLogger): Vector[Expr] =
+  val lines = code.split("\n").toVector
+  log.print(lines.prettyLine)
+  lines.map { 코드.parse(_).toOption.getOrElse(Expr.Noop) }
+
 def run(fileName: String)(using io: JwakIO, log: JwakLogger) =
-  val lines =
-    val lines = fromFile(fileName).getLines.toVector
-    log.print(lines.prettyLine)
-    lines.map { 코드.parse(_).toOption.getOrElse(Expr.Noop) }
+  val lines = codeToExprs(fromFile(fileName).mkString)
 
   log.print(lines.prettyLine)
   val interpreter =
