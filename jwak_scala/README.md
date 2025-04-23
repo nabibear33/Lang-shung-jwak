@@ -18,16 +18,47 @@ Scala code runner version: 1.5.4
 Scala version (default): 3.6.3
 ```
 
-- 상대 경로로 주어진 파일을 실행합니다.
+### `run`
+
+상대 경로로 주어진 파일을 실행합니다.
 
 ```sh
 # 현재 경로
-$ scala . -- "../example/hello_world.jwak"
+$ scala . -- run "../example/hello_world.jwak"
 Hello, world!
 
 # 프로젝트 루트 경로
-$ scala jwak_scala/ -- "example/hello_world.jwak"
+$ scala jwak_scala/ -- run "example/hello_world.jwak"
 Hello, world!
+```
+
+### `jwak`
+
+주어진 문장을 생성하는 jwak 코드를 생성합니다.
+
+```sh
+$ scala . -- jwak "리슝좍"
+교주님
+슝 좍
+슈웅 좌악, 좌아아아악
+...
+```
+
+### `eval`
+
+jwak 코드를 인자로 받아 실행합니다.
+
+```sh
+$ scala . -- eval "$(scala . -- jwak 리슝좍)"
+리슝좍
+```
+
+### `demo`
+
+모든 예제 코드를 실행합니다.
+
+```sh
+$ scala . -- demo
 ```
 
 ## 기타

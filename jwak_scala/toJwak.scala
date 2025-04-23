@@ -35,5 +35,3 @@ def toJwak(sentence: String): String =
       .map(getLines)
       .mkString + "비비따잇 ㅋㅋㅋㅋㅋㅋ\n"
   }.mkString
-
-@main def main(sentence: String) = println(toJwak(sentence))

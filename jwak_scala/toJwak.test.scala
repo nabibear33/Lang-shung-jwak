@@ -1,9 +1,11 @@
-package jwak
+package jwak.tojwak
+
 import jwak.interpreter.{MutableInterpreter, given_JwakLogger}
 
 import munit.FunSuite
 import jwak.parser.Expr
 import jwak.io.JwakIO
+import jwak.runner.codeToExprs
 
 def evalToJwak(sentence: String) =
   object StringBuilderIO extends JwakIO:

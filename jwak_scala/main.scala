@@ -1,46 +1,36 @@
 package jwak
 
-import java.io.File
-import scala.io.Source.fromFile
-
-import parsley.debug.combinator.*
-import parsley.debug.PrintView
-
-import jwak.parser.*
-import jwak.io.*
-import jwak.interpreter.{given, *}
-import jwak.logger.JwakLogger
 import scala.util.Try
 
-extension [A](xs: Iterable[A])
-  def prettyLine =
-    xs.zipWithIndex
-      .map((line, idx) => s"${idx.toString.padTo(2, ' ')}: $line")
-      .mkString("\n") + "\n"
+import mainargs.{main, arg, ParserForMethods, Flag}
 
-def codeToExprs(code: String)(using log: JwakLogger): Vector[Expr] =
-  val lines = code.split("\n").toVector
-  log.print(lines.prettyLine)
-  lines.map { 코드.parse(_).toOption.getOrElse(Expr.Noop) }
+import jwak.runner.*
+import jwak.interpreter.{given}
+import jwak.tojwak.toJwak
+import jwak.io.*
 
-def run(fileName: String)(using io: JwakIO, log: JwakLogger) =
-  val lines = codeToExprs(fromFile(fileName).mkString)
+object Main:
+  def main(args: Array[String]): Unit =
+    val parser = ParserForMethods(this)
+    parser.runEither(args.toSeq, allowPositional = true) match
+      case Left(error @ s"Need to specify a sub command:$_") =>
+        println(s"$error\n\n${parser.helpText()}")
+      case Left(error) => println(error)
+      case Right(_)    =>
 
-  log.print(lines.prettyLine)
-  val interpreter =
-    MutableInterpreter(lines = lines, maxCommandCount = 1000)(using
-      io = io,
-      log = log,
-    )
-  interpreter.eval()
-  println("\n")
+  @main(doc = "주어진 .jwak 파일을 실행합니다.")
+  def run(@arg(doc = "파일 경로") path: String) = runner.run(path)
 
-def main(args: Array[String]): Unit = args.toVector match
-  case Vector(path) => run(path)
-  case _ =>
-    Try(run("../example/fizzbuzz.jwak")).failed.foreach(println)
-    run("../example/hello_world.jwak")
-    run("../example/gugudan.jwak")
-    run("../example/fibonacci.jwak")(using io = ControlledIO(10))
-    Try(run("../example/infinite_loop.jwak")).failed.foreach(println)
-    Try(run("../example/syntax_error.jwak")).failed.foreach(println)
+  @main(doc = "표준 입력으로 주어진 jwak 코드를 실행합니다")
+  def eval(@arg(doc = "실행할 코드") code: String) = runner.run(codeToExprs(code))
+
+  @main(doc = "주어진 문장을 jwak 코드로 변환합니다.")
+  def jwak(@arg(doc = "변환할 문장") sentence: String) = println(toJwak(sentence))
+
+  @main(doc = "예제 코드를 실행합니다.") def demo() =
+    Try(runner.run("../example/fizzbuzz.jwak")).failed.foreach(println)
+    runner.run("../example/hello_world.jwak")
+    runner.run("../example/gugudan.jwak")
+    runner.run("../example/fibonacci.jwak")(using io = ControlledIO(10))
+    Try(runner.run("../example/infinite_loop.jwak")).failed.foreach(println)
+    Try(runner.run("../example/syntax_error.jwak")).failed.foreach(println)
