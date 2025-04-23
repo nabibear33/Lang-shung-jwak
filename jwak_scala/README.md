@@ -65,3 +65,33 @@ $ scala . -- demo
 
 - 오류 메시지 및 오류 처리가 제대로 되어 있지 않습니다. 추후 개선 예정입니다.
 - `#` 를 사용한 주석을 지원합니다.
+
+## 패키징
+
+[실행 파일을 패키징](https://scala-cli.virtuslab.org/docs/commands/package)하여 최대 [54배](#벤치마크) 더 빠르게 실행할 수 있습니다.
+
+```sh
+# JVM
+scala --power package . -o jwak-scala.jar -f
+
+# GraalVM
+scala --power package . -o jwak-scala.graal --native-image -f
+
+# Scala Native
+scala --power package . -o jwak-scala.native --native -f
+```
+
+### 벤치마크
+
+```sh
+hyperfine --warmup 5 --export-markdown benchmark.md -N \
+  './jwak-scala.native demo' \
+  './jwak-scala.graal demo' \
+  './jwak-scala.jar demo'
+```
+
+| Command                    |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
+| :------------------------- | -----------: | -------: | -------: | -----------: |
+| `./jwak-scala.native demo` |    8.9 ± 0.4 |      8.2 |     10.9 |         1.00 |
+| `./jwak-scala.graal demo`  |   13.5 ± 0.4 |     12.7 |     15.4 |  1.52 ± 0.08 |
+| `./jwak-scala.jar demo`    | 488.5 ± 11.9 |    473.8 |    510.6 | 54.88 ± 2.56 |
