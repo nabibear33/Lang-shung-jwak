@@ -18,19 +18,80 @@ Scala code runner version: 1.5.4
 Scala version (default): 3.6.3
 ```
 
-- 상대 경로로 주어진 파일을 실행합니다.
+### `run`
+
+상대 경로로 주어진 파일을 실행합니다.
 
 ```sh
 # 현재 경로
-$ scala . -- "../example/hello_world.jwak"
+$ scala . -- run "../example/hello_world.jwak"
 Hello, world!
 
 # 프로젝트 루트 경로
-$ scala jwak_scala/ -- "example/hello_world.jwak"
+$ scala jwak_scala/ -- run "example/hello_world.jwak"
 Hello, world!
+```
+
+### `jwak`
+
+주어진 문장을 생성하는 jwak 코드를 생성합니다.
+
+```sh
+$ scala . -- jwak "리슝좍"
+교주님
+슝 좍
+슈웅 좌악, 좌아아아악
+...
+```
+
+### `eval`
+
+jwak 코드를 인자로 받아 실행합니다.
+
+```sh
+$ scala . -- eval "$(scala . -- jwak 리슝좍)"
+리슝좍
+```
+
+### `demo`
+
+모든 예제 코드를 실행합니다.
+
+```sh
+$ scala . -- demo
 ```
 
 ## 기타
 
 - 오류 메시지 및 오류 처리가 제대로 되어 있지 않습니다. 추후 개선 예정입니다.
 - `#` 를 사용한 주석을 지원합니다.
+
+## 패키징
+
+[실행 파일을 패키징](https://scala-cli.virtuslab.org/docs/commands/package)하여 최대 [54배](#벤치마크) 더 빠르게 실행할 수 있습니다.
+
+```sh
+# JVM
+scala --power package . -o jwak-scala.jar -f
+
+# GraalVM
+scala --power package . -o jwak-scala.graal --native-image -f
+
+# Scala Native
+scala --power package . -o jwak-scala.native --native -f
+```
+
+### 벤치마크
+
+```sh
+hyperfine --warmup 5 --export-markdown benchmark.md -N \
+  './jwak-scala.native demo' \
+  './jwak-scala.graal demo' \
+  './jwak-scala.jar demo'
+```
+
+| Command                    |    Mean [ms] | Min [ms] | Max [ms] |     Relative |
+| :------------------------- | -----------: | -------: | -------: | -----------: |
+| `./jwak-scala.native demo` |    8.9 ± 0.4 |      8.2 |     10.9 |         1.00 |
+| `./jwak-scala.graal demo`  |   13.5 ± 0.4 |     12.7 |     15.4 |  1.52 ± 0.08 |
+| `./jwak-scala.jar demo`    | 488.5 ± 11.9 |    473.8 |    510.6 | 54.88 ± 2.56 |
